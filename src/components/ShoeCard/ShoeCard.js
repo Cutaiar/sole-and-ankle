@@ -34,21 +34,44 @@ const ShoeCard = ({
   return (
     <Link href={`/shoe/${slug}`}>
       <Wrapper>
+        {variant === "on-sale" && <SaleTag>Sale</SaleTag>}
+        {variant === "new-release" && <ReleaseTag>Just Released!</ReleaseTag>}
         <ImageWrapper>
           <Image alt="" src={imageSrc} />
         </ImageWrapper>
         <Spacer size={12} />
         <Row>
           <Name>{name}</Name>
-          <Price>{formatPrice(price)}</Price>
+          <Price $sale={variant === "on-sale"}>{formatPrice(price)}</Price>
         </Row>
         <Row>
           <ColorInfo>{pluralize('Color', numOfColors)}</ColorInfo>
+          {variant === "on-sale" && <SalePrice>{formatPrice(salePrice)}</SalePrice>}
         </Row>
       </Wrapper>
     </Link>
   );
 };
+
+const Tag = styled.span`
+  color: ${COLORS.white};
+  font-weight: ${WEIGHTS.bold};
+  padding: 9px;
+  border-radius: 2px;
+
+  position: absolute;
+  top: 12px;
+  right: -4px;
+`;
+
+const SaleTag = styled(Tag)`
+  background-color: ${COLORS.primary};
+
+`;
+
+const ReleaseTag = styled(Tag)`
+  background-color: ${COLORS.secondary};
+`;
 
 const Link = styled.a`
   text-decoration: none;
@@ -56,10 +79,11 @@ const Link = styled.a`
   flex: 1 0 344px;
 `;
 
-const Wrapper = styled.article``;
+const Wrapper = styled.article`
+  position: relative;
+`;
 
 const ImageWrapper = styled.div`
-  position: relative;
   border-radius: 16px 16px 4px 4px;
   overflow: hidden; /* Clip corners of contained image */
 `;
@@ -72,16 +96,18 @@ const Image = styled.img`
 const Row = styled.div`
   font-size: 1rem;
   display: flex;
+  justify-content: space-between;
 `;
 
 const Name = styled.h3`
   font-weight: ${WEIGHTS.medium};
   color: ${COLORS.gray[900]};
-  margin-right: auto;
   margin-bottom: 6px;
 `;
 
 const Price = styled.span`
+  text-decoration: ${p => p.$sale && "line-through"};
+  color: ${p => p.$sale && COLORS.gray[700]};
 `;
 
 const ColorInfo = styled.p`
